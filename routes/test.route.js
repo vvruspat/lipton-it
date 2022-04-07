@@ -1,55 +1,109 @@
 const { Router } = require('express');
 const Tests = require('../shemas/test.schema');
+const Questions = require('../shemas/questions.schema');
 
 const router = Router();
 
 router.get('/:testId', async (req, res, next) => {
 
     try {
-        const candidate = await TestModule.findOne({ _id: req.params.testId }).exec();
+        const candidate = await Tests.findOne({ _id: req.params.testId }).exec();
 
-        if (candidate) { 
-            return res.json(candidate)
+        if (candidate) {
+            const questions = await Questions.find({ testId: candidate._id }).exec();
+
+            res.json({
+                ...(candidate.toObject()),
+                questions,
+            });
+        } else {
+            res.sendStatus(404).json({error: `test with id ${req.params.testId} not found`});
         }
 
-        res.sendStatus(404).json({error: `test with id ${req.params.testId} not found`})
     } catch (err) { 
-        next(err)
+        next(err);
     }
 })
 
-router.get('/', async (req, res) => {
+/**
+ * All active tests
+ */
+router.get('/', async (req, res, next) => {
 
     const { vk_user_id: userId } = req.app.get('authData');
 
     try {
-        const result = await Tests.find({ userId }).exec();
-        
+        const result = await Tests.find({ status: 'available' }).exec();
+
         res.json(result);
 
-    } catch (err) { 
+    } catch (err) {
         next(err)
     }
 
 });
 
-router.post('/create', async (req, res, next) => { 
+/**
+ * All passed tests
+ */
+router.get('/history', async (req, res, next) => {
 
     const { vk_user_id: userId } = req.app.get('authData');
-    const { title, testType, status, description } = req.body;
+
+    try {
+        const result = await Tests.find({ status: { $ne: 'available' } }).exec();
+
+        res.json(result);
+
+    } catch (err) {
+        next(err)
+    }
+
+});
+
+/**
+ * Only mine tests
+ */
+router.get('/my', async (req, res, next) => {
+
+    const { vk_user_id: userId } = req.app.get('authData');
+
+    try {
+        const result = await Tests.find({ userId }).exec();
+
+        res.json(result);
+
+    } catch (err) {
+        next(err)
+    }
+
+});
+
+/**
+ * Create test with questions
+ */
+router.post('/', async (req, res, next) => {
+
+    const { vk_user_id: userId } = req.app.get('authData');
+    const { title, testType, status, description, questions } = req.body;
 
     try {
         const test = new Tests({ title, testType, status, description, userId });
         await test.save()
 
-        res.sendStatus(200)
+        await Questions.insertMany(questions?.map((question) => ({
+            ...question,
+            testId: test._id
+        })));
+
+        res.sendStatus(200);
 
     } catch (err) { 
         next(err);
     }
 });
 
-router.put('/:testId', async (req, res) => {
+router.put('/:testId', async (req, res, next) => {
 
     const { vk_user_id: userId } = req.app.get('authData');
     const { title, testType, status, description } = req.body;
@@ -68,7 +122,7 @@ router.put('/:testId', async (req, res) => {
 
  });
 
-router.delete('/:testId', async (req, res) => { 
+router.delete('/:testId', async (req, res, next) => {
 
     const { vk_user_id: userId } = req.app.get('authData');
 

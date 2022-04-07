@@ -9,8 +9,9 @@ const app = express();
 const authMiddleWare = require('./middlewares/auth');
 const mainRouter = require('./routes/index');
 
-const port = process.env.PORT || config.get('PORT');
 env.config();
+
+const port = process.env.PORT || config.get('PORT');
 
 app.use(express.json())
 app.use(cors());
@@ -20,8 +21,9 @@ app.use(authMiddleWare);
 
 app.use('/api', mainRouter);
 
-app.use((err, _, res) => {
-    res.status(500).json({ error: 'Internal server error' })
+app.use((err, _req, res, _next) => {
+
+    res.sendStatus(500).json({ error: 'Internal server error' });
 });
 
 app.listen(port, async (err) => {
@@ -32,6 +34,6 @@ app.listen(port, async (err) => {
         await mongoose.connect(`mongodb://dev:devsecret@45.8.249.80:27017/dev?authSource=admin`);
         console.log('API started at port', port);
     } catch (dbError) {
-        console.log('Error db connection', dbError)
+        console.log('Error db connection', dbError);
     }
 });
