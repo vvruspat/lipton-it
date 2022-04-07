@@ -16,11 +16,13 @@ app.use(express.json())
 app.use(cors());
 app.options('*', cors());
 
-if(process.env.NODE_ENV === 'production'){
-    app.use(authMiddleWare);
-}
+app.use(authMiddleWare);
 
 app.use('/api', mainRouter);
+
+app.use((err, _, res) => {
+    res.status(500).json({ error: 'Internal server error' })
+});
 
 app.listen(port, async (err) => {
     if (err) {
