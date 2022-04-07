@@ -49,7 +49,7 @@ router.get('/:testId', async (req, res, next) => {
          }, {})
 
         const questionsWithResults = questions.map((question) => {
-            return { ...(question.toObject()), result: hashMapOfResults[question._id] ?? []}
+            return { ...(question.toObject()), results: hashMapOfResults[question._id] ?? []}
         });
 
         res.json({ ...(test.toObject()), questions: questionsWithResults})
