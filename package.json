@@ -1,0 +1,25 @@
+{
+  "name": "lipton-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Melzmr/lipton-it-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Melzmr/lipton-it-backend/issues"
+  },
+  "homepage": "https://github.com/Melzmr/lipton-it-backend#readme",
+  "dependencies": {
+    "config": "^3.3.7",
+    "express": "^4.17.3",
+    "nodemon": "^2.0.15"
+  }
+}
