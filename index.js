@@ -21,8 +21,8 @@ app.use(authMiddleWare);
 
 app.use('/api', mainRouter);
 
-app.use((err, _req, res, _next) => {
-
+app.use((err, res, _next) => {
+    console.log()
     res.sendStatus(500).json({ error: 'Internal server error' });
 });
 

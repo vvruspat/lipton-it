@@ -4,33 +4,10 @@ const Questions = require('../shemas/questions.schema');
 
 const router = Router();
 
-router.get('/:testId', async (req, res, next) => {
-
-    try {
-        const candidate = await Tests.findOne({ _id: req.params.testId }).exec();
-
-        if (candidate) {
-            const questions = await Questions.find({ testId: candidate._id }).exec();
-
-            res.json({
-                ...(candidate.toObject()),
-                questions,
-            });
-        } else {
-            res.sendStatus(404).json({error: `test with id ${req.params.testId} not found`});
-        }
-
-    } catch (err) { 
-        next(err);
-    }
-})
-
 /**
  * All active tests
  */
 router.get('/', async (req, res, next) => {
-
-    const { vk_user_id: userId } = req.app.get('authData');
 
     try {
         const result = await Tests.find({ status: 'available' }).exec();
@@ -47,8 +24,6 @@ router.get('/', async (req, res, next) => {
  * All passed tests
  */
 router.get('/history', async (req, res, next) => {
-
-    const { vk_user_id: userId } = req.app.get('authData');
 
     try {
         const result = await Tests.find({ status: { $ne: 'available' } }).exec();
@@ -88,7 +63,7 @@ router.post('/', async (req, res, next) => {
     const { title, testType, status, description, questions } = req.body;
 
     try {
-        const test = new Tests({ title, testType, status, description, userId });
+        const test = new Tests({ title, testType, status, description, userId, createdAt: new Date().toISOString() });
         await test.save()
 
         await Questions.insertMany(questions?.map((question) => ({
@@ -142,5 +117,26 @@ router.delete('/:testId', async (req, res, next) => {
     }
 
 });
+
+router.get('/:testId', async (req, res, next) => {
+
+    try {
+        const candidate = await Tests.findOne({ _id: req.params.testId }).exec();
+
+        if (candidate) {
+            const questions = await Questions.find({ testId: candidate._id }).exec();
+
+            res.json({
+                ...(candidate.toObject()),
+                questions,
+            });
+        } else {
+            res.sendStatus(404).json({error: `test with id ${req.params.testId} not found`});
+        }
+
+    } catch (err) { 
+        next(err);
+    }
+})
 
 module.exports = router;
