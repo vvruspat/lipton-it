@@ -10,7 +10,6 @@ const authMiddleWare = require('./middlewares/auth');
 const mainRouter = require('./routes/index');
 
 const port = process.env.PORT || config.get('PORT');
-const app = express();
 env.config();
 
 app.use(express.json())
