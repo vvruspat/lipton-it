@@ -10,6 +10,7 @@ const TestsSchema = new Schema({
     status: {
         type: String, required: true, enum: ['available', 'completed', 'unavailable']
     },
+    createdAt: Date,
 });
 
 const Tests = model('Tests', TestsSchema);
