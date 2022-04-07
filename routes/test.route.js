@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const Tests = require('../shemas/test.schema');
-const TestModule = require('../shemas/test.schema');
 
 const router = Router();
 
