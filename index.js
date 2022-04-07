@@ -9,8 +9,9 @@ const app = express();
 const authMiddleWare = require('./middlewares/auth');
 const mainRouter = require('./routes/index');
 
-const port = process.env.PORT || config.get('PORT');
 env.config();
+
+const port = process.env.PORT || config.get('PORT');
 
 app.use(express.json())
 app.use(cors());
