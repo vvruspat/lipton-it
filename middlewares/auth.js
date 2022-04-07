@@ -2,6 +2,11 @@ const qs = require('querystring');
 const crypto = require('crypto');
 
 module.exports = (req, res, next) => {
+    if (process.env.NODE_ENV !== 'production') {
+        req.app.set('authData', { vk_user_id: "MOCK_USER_ID" });
+        return next();
+    }
+    
     try {
         const header = req.headers.authorization;
 
