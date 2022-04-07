@@ -21,8 +21,10 @@ app.use(authMiddleWare);
 
 app.use('/api', mainRouter);
 
-app.use((err, _, res) => {
-    res.status(500).json({ error: 'Internal server error' })
+app.use((err, _, res, next) => {
+    console.log(err);
+
+    res.sendStatus(500).json({ error: 'Internal server error' });
 });
 
 app.listen(port, async (err) => {
@@ -33,6 +35,6 @@ app.listen(port, async (err) => {
         await mongoose.connect(`mongodb://dev:devsecret@45.8.249.80:27017/dev?authSource=admin`);
         console.log('API started at port', port);
     } catch (dbError) {
-        console.log('Error db connection', dbError)
+        console.log('Error db connection', dbError);
     }
 });

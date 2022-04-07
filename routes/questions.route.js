@@ -1,30 +1,21 @@
 const { Router } = require('express');
+const Questions = require('../shemas/questions.schema');
 
 const router = Router();
 
 /**
- * Returns questions for test
+ * Remove question
  */
-router.get('/:testId', (req, res) => { 
-    res.json({ testId: req.params.testId});
-})
+router.delete('/:questionId', async (req, res, next) => {
 
-/**
- * Remove questions
- */
-router.delete('/:questionId', (req, res) => {
-    res.json({ testId: req.params.testId});
-})
+    try {
+        await Questions.findByIdAndRemove(req.params.questionId).exec();
 
+        res.json({ success: true });
+    } catch (e) {
+        next(e);
+    }
 
-/**
- * Answer
- */
-router.post('/:questionId', (req, res) => {
-    const { data } = req.body.data;
-    const { questionId } = req.params.questionId;
-
-    res.json({ testId: req.params.testId});
 })
 
 module.exports = router;
