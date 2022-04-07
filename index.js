@@ -1,8 +1,11 @@
 const express = require('express');
 const config = require('config')
 const app = express();
+const mainRouter = require('./routes/index')
 
 const port = config.get('PORT');
+
+app.use('/api', mainRouter)
 
 app.listen(port, (err) => {
     if (err) { 
