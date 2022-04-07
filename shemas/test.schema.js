@@ -10,6 +10,6 @@ const TestsSchema = new Schema({
     }
 });
 
-const Tests = model('Tests', TestSchema);
+const Tests = model('Tests', TestsSchema);
 
 module.exports = Tests;
