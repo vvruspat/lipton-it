@@ -16,7 +16,10 @@ app.use(express.json())
 app.use(cors());
 app.options('*', cors());
 
-app.use(authMiddleWare);
+
+if(process.env.NODE_ENV === 'production'){
+    app.use(authMiddleWare);
+}
 
 app.use('/api', mainRouter);
 
