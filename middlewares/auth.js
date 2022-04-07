@@ -26,6 +26,8 @@ module.exports = (req, res, next) => {
                 .replace(/=$/, '');
 
             if (paramsHash === authData.sign) {
+                req.app.set('authData', authData);
+
                 next();
             } else {
                 res.status(403).json({ error: 'Bad sign' });
