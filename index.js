@@ -12,10 +12,10 @@ const mainRouter = require('./routes/index');
 env.config();
 
 const port = process.env.PORT || config.get('PORT');
-const dbUser = proccess.env.DB_USER;
-const dbPass = proccess.env.DB_PWD;
-const dbHost = proccess.env.DB_HOST;
-const dbBase = proccess.env.DB_BASE;
+const dbUser = process.env.DB_USER;
+const dbPass = process.env.DB_PWD;
+const dbHost = process.env.DB_HOST;
+const dbBase = process.env.DB_BASE;
 
 app.use(express.json())
 app.use(cors());
