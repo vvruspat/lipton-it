@@ -14,6 +14,14 @@ router.post('/', async (req, res, next) => {
 
     try {
         const result = new Results({ questionId: questionObjectId, data, userId, createdAt: new Date().toISOString() })
+        const question = await Questions.findById(questionId).exec();
+
+        const testId = question.testId;
+        const test = await Tests.findById(testId);
+
+        if(!test.userPassedIds.includes(userId)){
+            await Tests.findByIdAndUpdate(testId, {userPassedIds: [...test.userPassedIds, userId]})
+        }
 
         await result.save();
 

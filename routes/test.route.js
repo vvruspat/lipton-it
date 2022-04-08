@@ -9,10 +9,26 @@ const router = Router();
  */
 router.get('/', async (req, res, next) => {
 
+    const { vk_user_id: userId } = req.app.get('authData');
+
     try {
         const result = await Tests.find({ status: 'available' }).exec();
 
-        res.json(result);
+        const resultToSend = result.map((res) => { 
+            const resultObj = res.toObject()
+            if (resultObj.userPassedIds.includes(userId)) { 
+                delete resultObj.userPassedIds;
+
+                return {...resultObj, completed: true, status: 'completed'}
+            }
+
+            delete resultObj.userPassedIds;
+            
+            return resultObj
+
+        })
+
+        res.json(resultToSend);
 
     } catch (err) {
         next(err)

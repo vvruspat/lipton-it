@@ -11,6 +11,7 @@ const TestsSchema = new Schema({
         type: String, required: true, enum: ['available', 'completed', 'unavailable']
     },
     createdAt: Date,
+    userPassedIds: [{type: String}]
 });
 
 const Tests = model('Tests', TestsSchema);
