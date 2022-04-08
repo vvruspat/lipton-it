@@ -162,13 +162,13 @@ router.get('/:testId', async (req, res, next) => {
             const questions = await Questions.find({ testId: candidate._id }).exec();
 
             const candidateObj = candidate.toObject();
-            const complited = candidateObj.userPassedIds.includes(userId)
+            const completed = candidateObj.userPassedIds.includes(userId)
 
             delete candidateObj.userPassedIds
 
             res.json({
                 ...candidateObj,
-                complited,
+                completed,
                 questions,
             });
         } else {
