@@ -44,7 +44,15 @@ router.get('/history', async (req, res, next) => {
     try {
         const result = await Tests.find({ status: { $ne: 'available' } }).exec();
 
-        res.json(result);
+        const resultToSend = result.map((res) => { 
+            const resObject = res.toObject();
+
+            delete resObject.userPassedIds
+
+            return resObject
+        })
+
+        res.json(resultToSend);
 
     } catch (err) {
         next(err)
@@ -62,7 +70,16 @@ router.get('/my', async (req, res, next) => {
     try {
         const result = await Tests.find({ userId }).exec();
 
-        res.json(result);
+        const resultToSend = result.map((res) => { 
+
+            const resObj = res.toObject();
+
+            delete resObj.userPassedIds
+            
+            return {...resObj, counter: res.userPassedIds?.length ?? 0}
+        })
+
+        res.json(resultToSend);
 
     } catch (err) {
         next(err)
@@ -142,8 +159,12 @@ router.get('/:testId', async (req, res, next) => {
         if (candidate) {
             const questions = await Questions.find({ testId: candidate._id }).exec();
 
+            const candidateObj = candidate.toObject();
+
+            delete candidateObj.userPassedIds
+
             res.json({
-                ...(candidate.toObject()),
+                ...candidateObj,
                 questions,
             });
         } else {
