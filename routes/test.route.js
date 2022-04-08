@@ -153,6 +153,8 @@ router.delete('/:testId', async (req, res, next) => {
 
 router.get('/:testId', async (req, res, next) => {
 
+    const { vk_user_id: userId } = req.app.get('authData');
+
     try {
         const candidate = await Tests.findOne({ _id: req.params.testId }).exec();
 
@@ -160,11 +162,13 @@ router.get('/:testId', async (req, res, next) => {
             const questions = await Questions.find({ testId: candidate._id }).exec();
 
             const candidateObj = candidate.toObject();
+            const isComplited = candidateObj.userPassedIds.includes(userId)
 
             delete candidateObj.userPassedIds
 
             res.json({
                 ...candidateObj,
+                isComplited,
                 questions,
             });
         } else {
