@@ -9,13 +9,12 @@ const app = express();
 const authMiddleWare = require('./middlewares/auth');
 const mainRouter = require('./routes/index');
 
-env.config();
-
 const port = process.env.PORT || config.get('PORT');
 const dbUser = process.env.DB_USER;
 const dbPass = process.env.DB_PWD;
 const dbHost = process.env.DB_HOST;
-const dbBase = process.env.DB_BASE;
+const dbName = process.env.DB_NAME;
+const dbPort = process.env.DB_PORT;
 
 app.use(express.json())
 app.use(cors());
@@ -34,7 +33,7 @@ app.listen(port, async (err) => {
         return console.error(err)
     }
     try {
-        await mongoose.connect(`mongodb://${dbUser}:${dbPass}@${dbHost}:27017/${dbBase}?authSource=admin`);
+        await mongoose.connect(`mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}?authSource=admin`);
         console.log('API started at port', port);
     } catch (dbError) {
         console.log('Error db connection', dbError);
