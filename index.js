@@ -33,7 +33,7 @@ app.listen(port, async (err) => {
         return console.error(err)
     }
     try {
-        await mongoose.connect(`mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}?authSource=admin`);
+        await mongoose.connect(`mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}`);
         console.log('API started at port', port);
     } catch (dbError) {
         console.log('Error db connection', dbError);
