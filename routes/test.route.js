@@ -123,7 +123,7 @@ router.put('/:testId', async (req, res, next) => {
             return res.sendStatus(200)
         }
 
-        res.sendStatus(401).json({error: "Test not found or user does't own it"})
+        res.status(401).json({error: "Test not found or user does't own it"})
     } catch (err) { 
         next(err)
     }
@@ -142,7 +142,7 @@ router.delete('/:testId', async (req, res, next) => {
             
             res.sendStatus(200)
         } else { 
-            res.sendStatus(401).json({error: "Test not found or user does't own it"})
+            res.status(401).json({error: "Test not found or user does't own it"})
         }
 
     } catch (err) { 
@@ -172,7 +172,7 @@ router.get('/:testId', async (req, res, next) => {
                 questions,
             });
         } else {
-            res.sendStatus(404).json({error: `test with id ${req.params.testId} not found`});
+            res.status(404).json({error: `test with id ${req.params.testId} not found`});
         }
 
     } catch (err) { 
