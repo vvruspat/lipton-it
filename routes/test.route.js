@@ -161,10 +161,10 @@ router.get('/:testId', async (req, res, next) => {
     const { user_platform: platform } = req.query
 
     try {
-        const candidate = await Tests.findOne({ _id: req.params.testId }).exec();
+        const candidate = await Tests.findOne({ _id: req.params.testId, platform: platform }).exec();
 
         if (candidate) {
-            const questions = await Questions.find({ testId: candidate._id, platform: platform }).exec();
+            const questions = await Questions.find({ testId: candidate._id }).exec();
 
             const candidateObj = candidate.toObject();
             const completed = candidateObj.userPassedIds.includes(userId)
