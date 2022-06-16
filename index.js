@@ -32,7 +32,7 @@ conn.once('open', () => {
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-app.use(cors());
+app.use(cors({allowedHeaders: ['platform', 'Platform']}));
 app.options('*', cors());
 
 app.use(authMiddleWare);
