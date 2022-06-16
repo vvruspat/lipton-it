@@ -11,7 +11,9 @@ const TestsSchema = new Schema({
         type: String, required: true, enum: ['available', 'completed', 'unavailable']
     },
     createdAt: Date,
-    userPassedIds: [{type: String}]
+    userPassedIds: [{ type: String }],
+    isPrivate: { type: Boolean, default: false },
+    platform: {type: String, default: 'desktop', enum: ['desktop', 'mobile']}
 });
 
 const Tests = model('Tests', TestsSchema);

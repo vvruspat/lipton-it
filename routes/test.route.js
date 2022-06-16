@@ -10,9 +10,10 @@ const router = Router();
 router.get('/', async (req, res, next) => {
 
     const { vk_user_id: userId } = req.app.get('authData');
+    const { platform } = req.headers
 
     try {
-        const result = await Tests.find({ status: 'available' }).exec();
+        const result = await Tests.find({ status: 'available', isPrivate: false, platform }).exec();
 
         const resultToSend = result.map((res) => { 
             const resultObj = res.toObject()
@@ -41,8 +42,10 @@ router.get('/', async (req, res, next) => {
  */
 router.get('/history', async (req, res, next) => {
 
+    const { platform } = req.headers
+
     try {
-        const result = await Tests.find({ status: { $ne: 'available' } }).exec();
+        const result = await Tests.find({ status: { $ne: 'available' }, isPrivate: false, platform }).exec();
 
         const resultToSend = result.map((res) => { 
             const resObject = res.toObject();
@@ -93,10 +96,11 @@ router.get('/my', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
 
     const { vk_user_id: userId } = req.app.get('authData');
-    const { title, testType, status, description, questions } = req.body;
+    const { platform } = req.headers;
+    const { title, testType, status, description, isPrivate, questions } = req.body;
 
     try {
-        const test = new Tests({ title, testType, status, description, userId, createdAt: new Date().toISOString() });
+        const test = new Tests({ title, testType, status, description, isPrivate, platform, userId, createdAt: new Date().toISOString() });
         await test.save()
 
         await Questions.insertMany(questions?.map((question) => ({
