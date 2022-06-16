@@ -1,8 +1,11 @@
+const env = require('dotenv');
+env.config();
+
 const express = require('express');
 const config = require('config');
 const cors = require('cors');
+const Grid = require('gridfs-stream');
 const mongoose = require('mongoose');
-const env = require('dotenv');
 
 const app = express();
 
@@ -16,13 +19,39 @@ const dbHost = process.env.DB_HOST;
 const dbName = process.env.DB_NAME;
 const dbPort = process.env.DB_PORT;
 
+const conn = mongoose.connection;
+let gfs, gridfsBucket;
+
+conn.once('open', () => { 
+    gridfsBucket = new mongoose.mongo.GridFSBucket(conn.db, {
+         bucketName: 'images'
+    })
+    gfs = Grid(conn.db, mongoose.mongo)
+    gfs.collection('images')
+})
+
 app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 app.use(cors());
 app.options('*', cors());
 
 app.use(authMiddleWare);
 
 app.use('/api', mainRouter);
+app.use('/images/:filename', async (req, res) => {
+    try {
+        const file = await gfs.files.findOne({ filename: req.params.filename });
+        if (!file) { 
+            return res.sendStatus(404);
+        }
+
+        const readStream = gridfsBucket.openDownloadStream(file._id);
+        readStream.pipe(res);
+    } catch (err) { 
+        res.sendStatus(404)
+    }
+    
+ })
 
 app.use((err, res, _next) => {
     res.status(500).json({ error: 'Internal server error' });
