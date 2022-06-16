@@ -42,7 +42,7 @@ router.get('/', async (req, res, next) => {
  */
 router.get('/history', async (req, res, next) => {
 
-    const { Platform: platform } = req.headers
+    const { platform } = req.headers
 
     try {
         const result = await Tests.find({ status: { $ne: 'available' }, isPrivate: false, platform }).exec();
