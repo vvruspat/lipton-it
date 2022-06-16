@@ -42,7 +42,7 @@ router.get('/', async (req, res, next) => {
  */
 router.get('/history', async (req, res, next) => {
 
-    const { platform } = req.headers
+    const { Platform: platform } = req.headers
 
     try {
         const result = await Tests.find({ status: { $ne: 'available' }, isPrivate: false, platform }).exec();
@@ -96,12 +96,12 @@ router.get('/my', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
 
     const { vk_user_id: userId } = req.app.get('authData');
-    const { platform } = req.headers;
-    const { title, testType, status, description, isPrivate, questions } = req.body;
+    const { title, testType, status, description, isPrivate, platform, questions } = req.body;
 
     try {
         const test = new Tests({ title, testType, status, description, isPrivate, platform, userId, createdAt: new Date().toISOString() });
         await test.save()
+        
 
         await Questions.insertMany(questions?.map((question) => ({
             ...question,
