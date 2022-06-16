@@ -10,8 +10,8 @@ const router = Router();
 router.get('/', async (req, res, next) => {
 
     const { vk_user_id: userId } = req.app.get('authData');
-    const { platform } = req.headers
-
+    const { user_platform: platform } = req.query
+    
     try {
         const result = await Tests.find({ status: 'available', isPrivate: false, platform }).exec();
 
@@ -42,7 +42,7 @@ router.get('/', async (req, res, next) => {
  */
 router.get('/history', async (req, res, next) => {
 
-    const { platform } = req.headers
+    const { user_platform: platform } = req.query
 
     try {
         const result = await Tests.find({ status: { $ne: 'available' }, isPrivate: false, platform }).exec();
@@ -158,12 +158,13 @@ router.delete('/:testId', async (req, res, next) => {
 router.get('/:testId', async (req, res, next) => {
 
     const { vk_user_id: userId } = req.app.get('authData');
+    const { user_platform: platform } = req.query
 
     try {
         const candidate = await Tests.findOne({ _id: req.params.testId }).exec();
 
         if (candidate) {
-            const questions = await Questions.find({ testId: candidate._id }).exec();
+            const questions = await Questions.find({ testId: candidate._id, platform: platform }).exec();
 
             const candidateObj = candidate.toObject();
             const completed = candidateObj.userPassedIds.includes(userId)
