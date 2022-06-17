@@ -11,6 +11,7 @@ const app = express();
 
 const authMiddleWare = require('./middlewares/auth');
 const mainRouter = require('./routes/index');
+const healthcheckRouter = require('./routes/healthcheck.route');
 
 const port = process.env.PORT || config.get('PORT');
 const dbUser = process.env.DB_USER;
@@ -34,6 +35,8 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cors());
 app.options('*', cors());
+
+app.use('/api/healthcheck', healthcheckRouter)
 
 app.use(authMiddleWare);
 
