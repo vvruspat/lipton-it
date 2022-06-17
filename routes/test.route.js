@@ -1,7 +1,6 @@
 const { Router } = require('express');
 const Tests = require('../shemas/test.schema');
 const Questions = require('../shemas/questions.schema');
-const mongoose = require('mongoose')
 const getGfs = require('../modules/gfs')
 
 const router = Router();
