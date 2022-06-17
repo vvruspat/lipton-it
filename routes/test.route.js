@@ -1,6 +1,8 @@
 const { Router } = require('express');
 const Tests = require('../shemas/test.schema');
 const Questions = require('../shemas/questions.schema');
+const mongoose = require('mongoose')
+const getGfs = require('../modules/gfs')
 
 const router = Router();
 
@@ -101,7 +103,6 @@ router.post('/', async (req, res, next) => {
     try {
         const test = new Tests({ title, testType, status, description, isPrivate, platform, userId, createdAt: new Date().toISOString() });
         await test.save()
-        
 
         await Questions.insertMany(questions?.map((question) => ({
             ...question,
@@ -137,13 +138,28 @@ router.put('/:testId', async (req, res, next) => {
 router.delete('/:testId', async (req, res, next) => {
 
     const { vk_user_id: userId } = req.app.get('authData');
+    const { gfs } = getGfs()
 
     try {
-        const result = await Tests.findById(req.params.testId).exec()
+        const result = await Tests.findOneAndRemove({ userId, _id: req.params.testId }).exec()
 
-        if (result && result.userId === userId) {
-            await Tests.findOneAndRemove({ userId }).exec()
-            
+        if (result) {
+            const questions = await Questions.find({ testId: result._id }).exec();
+            const fileNames = questions.reduce((acc, item) => acc.concat(item.data), []).map((img) => img.split('/').reverse()[0])
+
+            // remove images
+            fileNames.forEach(async (filename) => {
+                try {
+                    await gfs.files.remove({ filename })
+                } catch (err) { 
+                    console.error(err);
+                }
+            })
+
+            // remove questions
+
+            await Questions.deleteMany({testId: result._id}).exec();
+
             res.sendStatus(200)
         } else { 
             res.status(401).json({error: "Test not found or user does't own it"})
